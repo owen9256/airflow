@@ -1151,6 +1151,17 @@ class TaskInstance(Base):
             logging.error("Failed at executing callback")
             logging.exception(e3)
 
+        # send weixin
+        try:
+            import requests
+            url = 'http://sha2dw01:8088/sms'
+            msg = 'airflow job %s fail at %s'%(str(self.task), datetime.now().strftime('%Y-%m-%d %H:%M'))
+            data = {'tos':'qqg|lee|austin|zhangyao','content':msg}
+            res = requests.post(url, data=data)
+        except Exception as e4:
+            logging.error("Failed at send weixin")
+            logging.exception(e4)
+            
         if not test_mode:
             session.merge(self)
         session.commit()
